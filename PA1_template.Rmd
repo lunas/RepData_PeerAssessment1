@@ -1,11 +1,46 @@
 # Reproducible Research: Peer Assessment 1
 
-
 ## Loading and preprocessing the data
 
+We assume that the current directory contains the zipped data file 'activity.zip'. 
 
+Unzip it and load it, and discard rows :
+```{r echo=TRUE}
+unzip('activity.zip')
+df <- read.csv('activity.csv')
+```
 
 ## What is mean total number of steps taken per day?
+
+Aggregate the data to get the total of steps per day:
+
+```{r echo=TRUE}
+num.steps.per.day <- aggregate(df$steps, list(df$date), sum, na.rm=T)
+names(num.steps.per.day) <- c("date", "num.steps")
+num.steps.per.day
+```
+
+Aggregate the data to get the mean number of steps per day:
+
+```{r echo=TRUE}
+mean.steps.per.day <- aggregate(df$steps, list(df$date), mean, na.rm=T)
+names(mean.steps.per.day) <- c("date", "mean.steps")
+mean.steps.per.day
+```
+
+Aggregate the data to get the median number of steps per day:
+
+```{r echo=TRUE}
+median.steps.per.day <- aggregate(df$steps, list(df$date), median, na.rm=T)
+names(median.steps.per.day) <- c("date", "median.steps")
+median.steps.per.day
+```
+
+### Histogram of the steps taken per day
+
+```{r echo=TRUE}
+hist(num.steps.per.day$num.steps, breaks=10, main="Histogram: number of steps per day", xlab="number of steps per day")
+```
 
 
 
