@@ -96,9 +96,8 @@ median(steps.per.day.complete$num.steps, na.rm=T)
 ```
 
 #### Changes introduced by replacing missing values: 
-Days without a single steps measurement (i.e. only NAs) show up as having 0 steps in the histogram.   
-With missing values replaced by the mean of the interval over the days, such days with seemingly
-0 steps disappear.    
+Days without a single steps measurement (i.e. only NAs) show up as having 0 steps in the histogram; 
+replacing missing values by the mean of the interval over the days makes such days with seemingly 0 steps disappear.    
 With missing values, the mean is 9354 and the median 10395.    
 Without missing values, both mean and median are 10766.
 
@@ -108,31 +107,14 @@ Create a new factor variable in the dataset with two levels -- "weekday" and "we
 
 ```{r echo=TRUE}
 weekend <- weekdays( as.Date(df.complete$date)) == "Saturday" | weekdays( as.Date(df.complete$date)) == "Sunday"
-df.complete$weekend <- as.factor(weekend)
+df.complete$weekend <- factor(weekend, levels=c(FALSE, TRUE), labels=c("weekday", "weekend"))
 ```
 
 Number of steps per interval averaged over weekdays and over weekends:
 
 ```{r echo=TRUE}
-df.weekday <- df.complete[ df.complete$weekend==FALSE, ]
-df.weekend <- df.complete[ df.complete$weekend==TRUE, ]
-weekday.steps <- aggregate(df.weekday$steps, list(df.weekday$interval), mean, na.rm=T)
-weekend.steps <- aggregate(df.weekend$steps, list(df.weekend$interval), mean, na.rm=T)
-steps.per.interval$weekdays <- weekday.steps$x
-steps.per.interval$weekend  <- weekend.steps$x
-
-par(mfrow=c(2,1))
-plot(steps.per.interval$interval, steps.per.interval$weekend, t="l", main="weekend", ylab="Number of steps", xlab="Interval")
-plot(steps.per.interval$interval, steps.per.interval$weekdays, t="l", main="weekdays", ylab="Number of steps", xlab="Interval")
-
-```
-
-### A simpler way to do the weekend/weekday plot:
-
-```{r echo=TRUE}
 spiw <- aggregate(df.complete$steps, list(df.complete$weekend, df.complete$interval), mean, na.rm=T)
 library(lattice)
 names(spiw) <- c("weekend", "interval", "mean.steps")
-xyplot(spiw$mean.steps ~ spiw$interval | spiw$weekend)
+xyplot(mean.steps ~ interval | weekend, data=spiw, type="b", layout=c(1, 2), xlab="Interval", ylab="Number of steps", pch="")
 ```
-spiw <- aggregate(df.complete$steps, list(df.complete$weekend, df.complete$interval), mean, na.rm=T)
